@@ -8,7 +8,7 @@ TYPE_JOURS = (
     (2, 'Jours ouvrés'), # Lundi au Vendredi
     (3, 'Jours calendaires'), # Lundi au Dimanche
     (4, 'Jours francs'), # 24h glissantes
-    (5, 'Jours fixe'), # A date du jour dans le mois (par ex: le 27 pour MSF)
+    (5, 'Jours fixe'), # A date du jour dans le mois (par ex: le 27 de chaque mois)
 )
 
 class BandePrelevement:
