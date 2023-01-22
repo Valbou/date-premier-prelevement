@@ -94,7 +94,7 @@ class BandePrelevement:
         elif self.type_bande == TypeBande.OUVRES:  # jours ouvrés
             self._convert_jours_calendaires(ecart.days, 5)
 
-    def date_prochain_prelevement(self, aujourdhui: Optional[datetime.date] = None):
+    def date_prochain_prelevement(self, aujourdhui: Optional[datetime.date] = None) -> datetime.date:
         """Retourne la date du prochain prélèvement selon la date du jour"""
         self.aujourdhui = aujourdhui or datetime.date.today()
         self._calcul_bande()
