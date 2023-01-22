@@ -67,3 +67,21 @@ class TestBandePrelevement(unittest.TestCase):
         self.bande.type_bande = TypeBande.FIXE
         self.bande.taille_bande = 27
         self._bande()
+
+    def test_depassement_annee(self):
+        jour = datetime.date(year=2022, month=12, day=1)
+        annee, mois = self.bande._depassement_annee(jour)
+        self.assertEqual(annee, 2023)
+        self.assertEqual(mois, 1)
+
+    def test_depassement_annee_fin_mois(self):
+        jour = datetime.date(year=2022, month=12, day=31)
+        annee, mois = self.bande._depassement_annee(jour)
+        self.assertEqual(annee, 2023)
+        self.assertEqual(mois, 1)
+
+    def test_sans_depassement_annee(self):
+        jour = datetime.date(year=2023, month=1, day=1)
+        annee, mois = self.bande._depassement_annee(jour)
+        self.assertEqual(annee, 2023)
+        self.assertEqual(mois, 2)

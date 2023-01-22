@@ -4,7 +4,7 @@
 
 import datetime
 from enum import Enum
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class TypeBande(Enum):
@@ -29,7 +29,7 @@ class BandePrelevement:
         self.jour_prelevement: int = jour_prelevement
         self.aujourdhui = None
 
-    def _depassement_annee(self, local_date: datetime.date):
+    def _depassement_annee(self, local_date: datetime.date) -> Tuple[int, int]:
         if local_date.month + 1 <= 12:
             mois = local_date.month + 1
             annee = local_date.year
@@ -38,28 +38,31 @@ class BandePrelevement:
             annee = local_date.year + 1
         return annee, mois
 
-    def _calcul_date_prelevement(self):
+    def _calcul_date_prelevement(self) -> datetime.date:
         """Détermine la prochaine date de prélèvement possible"""
         if self.jour_prelevement < self.aujourdhui.day:
             annee, mois = self._depassement_annee(self.aujourdhui)
-            self.date_prelevement = datetime.date(
+            date_prelevement = datetime.date(
                 year=annee, month=mois, day=self.jour_prelevement
             )
         else:
-            self.date_prelevement = datetime.date(
+            date_prelevement = datetime.date(
                 year=self.aujourdhui.year,
                 month=self.aujourdhui.month,
                 day=self.jour_prelevement,
             )
+        return date_prelevement
 
-    def _repousse_date_prelevement(self):
+    def _repousse_date_prelevement(
+        self, date_prelevement: datetime.date
+    ) -> datetime.date:
         """Détermine la date de prélèvement suivante possible"""
-        annee, mois = self._depassement_annee(self.date_prelevement)
-        self.date_prelevement = datetime.date(
-            year=annee, month=mois, day=self.date_prelevement.day
-        )
+        annee, mois = self._depassement_annee(date_prelevement)
+        return datetime.date(year=annee, month=mois, day=date_prelevement.day)
 
-    def _convert_jours_calendaires(self, ecart: int, jours_semaine: int):
+    def _convert_jours_calendaires(
+        self, date_prelevement: datetime.date, ecart: int, jours_semaine: int
+    ) -> datetime.date:
         """Convertion des jours ouvrables en jours calandaires"""
         semaines_cal = ecart // 7
         semaines_bande = self.taille_bande // jours_semaine
@@ -68,34 +71,42 @@ class BandePrelevement:
 
         # Il reste plus de semaines calendaires que la bande ne contient de semaines en jours ouvrables
         if (semaines_cal < semaines_bande) or (ecart <= bande_cal):
-            self._repousse_date_prelevement()
+            date_prelevement = self._repousse_date_prelevement(date_prelevement)
+        return date_prelevement
 
-    def _calcul_bande(self):
+    def _calcul_bande(self) -> datetime.date:
         """Contrôle si l'on est dans la bande ou pas"""
-        self._calcul_date_prelevement()
-        ecart = self.date_prelevement - self.aujourdhui
+        date_prelevement = self._calcul_date_prelevement()
+        ecart = date_prelevement - self.aujourdhui
         if (
             self.type_bande != TypeBande.FIXE and ecart.days <= self.taille_bande
         ):  # gestion des cas évidents + jours calendaires et francs
-            self._repousse_date_prelevement()
+            date_prelevement = self._repousse_date_prelevement(date_prelevement)
         elif (
             self.type_bande == TypeBande.FIXE
             and self.aujourdhui.day >= self.taille_bande
         ):  # gestion des jours fixes
-            self._repousse_date_prelevement()
+            date_prelevement = self._repousse_date_prelevement(date_prelevement)
         elif (
             self.type_bande == TypeBande.FIXE
             and self.aujourdhui.day <= self.taille_bande
-            and self.aujourdhui.month == self.date_prelevement.month
+            and self.aujourdhui.month == date_prelevement.month
         ):  # gestion des jours fixes
-            self._repousse_date_prelevement()
+            date_prelevement = self._repousse_date_prelevement(date_prelevement)
         elif self.type_bande == TypeBande.OUVRABLES:  # jours ouvrables
-            self._convert_jours_calendaires(ecart.days, 6)
+            date_prelevement = self._convert_jours_calendaires(
+                date_prelevement, ecart.days, 6
+            )
         elif self.type_bande == TypeBande.OUVRES:  # jours ouvrés
-            self._convert_jours_calendaires(ecart.days, 5)
+            date_prelevement = self._convert_jours_calendaires(
+                date_prelevement, ecart.days, 5
+            )
 
-    def date_prochain_prelevement(self, aujourdhui: Optional[datetime.date] = None) -> datetime.date:
+        return date_prelevement
+
+    def date_prochain_prelevement(
+        self, aujourdhui: Optional[datetime.date] = None
+    ) -> datetime.date:
         """Retourne la date du prochain prélèvement selon la date du jour"""
         self.aujourdhui = aujourdhui or datetime.date.today()
-        self._calcul_bande()
-        return self.date_prelevement
+        return self._calcul_bande()
