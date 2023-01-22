@@ -25,11 +25,10 @@ class TestBandePrelevement(unittest.TestCase):
             ],
         )
         jour = debut
-        i = 0
 
         # Test du mois entier
         while debut <= jour <= fin:
-            with self.subTest(i=i):
+            with self.subTest(jour):
                 # Prélèvement le mois prochain
                 if jour < self.bascule:
                     self.assertEqual(
@@ -42,7 +41,6 @@ class TestBandePrelevement(unittest.TestCase):
                         self.bande.date_prochain_prelevement(jour),
                         datetime.date(year=2019, month=2, day=5),
                     )
-            i += 1
             jour = jour + datetime.timedelta(days=1)
 
     def test_date_prochain_prelevement_jour_ouvrables(self):
