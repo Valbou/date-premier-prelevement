@@ -44,27 +44,27 @@ class TestBandePrelevement(unittest.TestCase):
             jour = jour + datetime.timedelta(days=1)
 
     def test_date_prochain_prelevement_jour_ouvrables(self):
-        self.bande.type_bande = TypeBande.OUVRABLES
+        self.bande._type_bande = TypeBande.OUVRABLES
         self.bande.taille_bande = 8
         self._bande()
 
     def test_date_prochain_prelevement_jour_ouvres(self):
-        self.bande.type_bande = TypeBande.OUVRES
+        self.bande._type_bande = TypeBande.OUVRES
         self.bande.taille_bande = 7
         self._bande()
 
     def test_date_prochain_prelevement_jour_calendaires(self):
-        self.bande.type_bande = TypeBande.CALENDAIRES
+        self.bande._type_bande = TypeBande.CALENDAIRES
         self.bande.taille_bande = 9
         self._bande()
 
     def test_date_prochain_prelevement_jour_francs(self):
-        self.bande.type_bande = TypeBande.FRANCS
+        self.bande._type_bande = TypeBande.FRANCS
         self.bande.taille_bande = 9
         self._bande()
 
     def test_date_prochain_prelevement_jour_fixe(self):
-        self.bande.type_bande = TypeBande.FIXE
+        self.bande._type_bande = TypeBande.FIXE
         self.bande.taille_bande = 27
         self._bande()
 
@@ -85,3 +85,32 @@ class TestBandePrelevement(unittest.TestCase):
         annee, mois = self.bande._depassement_annee(jour)
         self.assertEqual(annee, 2023)
         self.assertEqual(mois, 2)
+
+    def test_calcul_date_prelevement_a_venir(self):
+        aujourdhui = datetime.date(year=2018, month=12, day=4)
+        self.assertEqual(
+            self.bande._calcul_date_prelevement(aujourdhui),
+            datetime.date(year=2018, month=12, day=5)
+        )
+
+    def test_calcul_date_prelevement_passee(self):
+        aujourdhui = datetime.date(year=2018, month=12, day=6)
+        self.assertEqual(
+            self.bande._calcul_date_prelevement(aujourdhui),
+            datetime.date(year=2019, month=1, day=5)
+        )
+
+    def test_calcul_date_prelevement_actuelle(self):
+        aujourdhui = datetime.date(year=2018, month=12, day=5)
+        self.assertEqual(
+            self.bande._calcul_date_prelevement(aujourdhui),
+            datetime.date(year=2018, month=12, day=5)
+        )
+
+    def test_repousse_date_prelevement(self):
+        date_prelevement = datetime.date(year=2022, month=12, day=5)
+        nouvelle_date = self.bande._repousse_date_prelevement(date_prelevement)
+        self.assertEqual(
+            nouvelle_date,
+            datetime.date(year=2023, month=1, day=5)
+        )

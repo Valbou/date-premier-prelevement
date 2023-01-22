@@ -3,7 +3,7 @@ Calcul de la date de premier prélèvement, selon une bande de prélèvement exp
 
 ![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
 ![Python v3.7](https://img.shields.io/badge/python-v3.7-blue "Python v3.7")
-![Tests 8 passed](https://img.shields.io/badge/tests-6%20passed-green "Tests 8 passed")
+![Tests 12 passed](https://img.shields.io/badge/tests-12%20passed-green "Tests 12 passed")
 ![Coverage 100%](https://img.shields.io/badge/coverage-100%25-green "Coverage 100%")
 ![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
 
