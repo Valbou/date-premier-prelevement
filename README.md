@@ -1,6 +1,12 @@
 # Date de Premier Prelevement
 Calcul de la date de premier prélèvement, selon une bande de prélèvement exprimée en jours légaux (ouvrés, ouvrables, calendaires, etc...) ou fixes.
 
+![License LGPLv3](https://img.shields.io/badge/license-LGPLv3-blue "License LGPLv3")
+![Python v3.7](https://img.shields.io/badge/python-v3.7-blue "Python v3.7")
+![Tests 10 passed](https://img.shields.io/badge/tests-10%20passed-green "Tests 10 passed")
+![Coverage 100%](https://img.shields.io/badge/coverage-97-green "Coverage 100%")
+![Code quality A](https://img.shields.io/badge/code%20quality-A-green "Code quality A")
+
 La bande de prélèvement correspond au délai minimum nécessaire à la mise en place d'un prélèvement automatique. (Variable selon les process et les banques)
 
 Cet outil est utilisé dans la collecte de dons notamment.
