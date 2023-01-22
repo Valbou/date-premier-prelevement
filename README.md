@@ -21,5 +21,5 @@ aujourdhui = date.today()
 bande = BandePrelevement(
     type_bande=TypeBande.OUVRES, taille_bande=7, jour_prelevement=5
 )
-date_prelevement: date = bande.date_prochain_prelevement()
+date_prelevement: date = bande.date_prochain_prelevement(aujourdhui)
 ```
